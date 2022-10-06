@@ -1,0 +1,170 @@
+package ru.apps.weatherforecastcompose.screens
+
+import android.widget.TableLayout
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
+import ru.apps.weatherforecastcompose.Data.WeatherModel
+import ru.apps.weatherforecastcompose.R
+import ru.apps.weatherforecastcompose.ui.theme.SeaColor
+
+
+
+@Composable
+fun MainCard(currentDay: MutableState<WeatherModel>) {
+    Column(
+        modifier = Modifier
+            .padding(5.dp)
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = SeaColor.copy(alpha = 0.4F), //полупрозрачный цвет
+            elevation = 0.dp,
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp, start = 5.dp),
+                        text = currentDay.value.time,
+                        style = TextStyle(fontSize = 15.sp),
+                        color = Color.White
+                    )
+                    AsyncImage(
+                        model = "https:" + currentDay.value.icon,
+                        contentDescription = "im2",
+                        modifier = Modifier
+                            .padding(top = 3.dp, end = 8.dp)
+                            .size(45.dp)
+                    )
+                }
+                Text(
+                    text = currentDay.value.city,
+                    style = TextStyle(fontSize = 25.sp),
+                    color = Color.White
+                )
+                Text(
+                    text = currentDay.value.currentTemp.toFloat().toInt().toString() + "°C", //alt+248=== Знак "°"
+                    style = TextStyle(fontSize = 65.sp),
+                    color = Color.White
+                )
+                Text(
+                    text = currentDay.value.condition,
+                    style = TextStyle(fontSize = 17.sp),
+                    color = Color.White
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = {
+
+                    }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = "im3",
+                            tint = Color.White
+                        )
+                    }
+                    Text(modifier = Modifier.padding(top = 10.dp),
+                        text = "${currentDay.value.minTemp} / ${currentDay.value.maxTemp}°C",
+                        style = TextStyle(fontSize = 16.sp),
+                        color = Color.White
+                    )
+                    IconButton(onClick = {
+
+                    }
+
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_syncronize ),
+                            contentDescription = "im4",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
+    val tabList = listOf("Hours", "Days")
+    val pagerState = rememberPagerState()
+    val tabIndex = pagerState.currentPage
+    val coroutineScope = rememberCoroutineScope()
+    Column(modifier = Modifier
+        .padding(start = 5.dp, end = 5.dp)
+        .clip(RoundedCornerShape(3.dp))) {
+        TabRow(
+            selectedTabIndex = tabIndex,
+            indicator = { pos->
+                        TabRowDefaults.Indicator(
+                            Modifier.pagerTabIndicatorOffset(
+                                pagerState, pos
+                            )
+                        )
+            },
+            backgroundColor = SeaColor.copy(alpha = 0.6F),
+            contentColor = Color.White
+        ) {
+            tabList.forEachIndexed { index, text ->
+                Tab(selected = false,
+                    onClick = {
+                        coroutineScope.launch{
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                    text = { Text(text = text) }
+                )
+            }
+        }
+        HorizontalPager(count = tabList.size,
+            state = pagerState,
+            modifier = Modifier.weight(1.0f)
+        ) {
+            index ->
+            LazyColumn(modifier = Modifier.fillMaxSize()
+            ){
+                itemsIndexed(
+                    daysList.value
+                ){
+                    _, item ->
+                    ListItem(item)
+                }
+            }
+        }
+    }
+}
