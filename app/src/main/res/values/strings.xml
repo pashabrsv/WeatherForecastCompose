@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WeatherForecastCompose</string>
+    <string name="lable_name">Прогноз погоды</string>
 </resources>
