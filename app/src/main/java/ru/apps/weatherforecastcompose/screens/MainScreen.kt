@@ -27,6 +27,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import ru.apps.weatherforecastcompose.Data.WeatherModel
 import ru.apps.weatherforecastcompose.R
 import ru.apps.weatherforecastcompose.ui.theme.SeaColor
@@ -40,7 +42,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
             .padding(5.dp)
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp),
             backgroundColor = SeaColor.copy(alpha = 0.4F), //полупрозрачный цвет
             elevation = 0.dp,
             shape = RoundedCornerShape(10.dp)
@@ -73,7 +77,11 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                     color = Color.White
                 )
                 Text(
-                    text = currentDay.value.currentTemp.toFloat().toInt().toString() + "°C", //alt+248=== Знак "°"
+                    text = if (currentDay.value.currentTemp.isNotEmpty())
+                        currentDay.value.currentTemp.toFloat().toInt().toString() + "°C"
+                    else currentDay.value.minTemp.toFloat().toInt().toString() +
+                            "/ ${currentDay.value.maxTemp.toFloat().toInt()}°C"
+                    , //alt+248=== Знак "°"
                     style = TextStyle(fontSize = 65.sp),
                     color = Color.White
                 )
@@ -120,8 +128,8 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
-    val tabList = listOf("Hours", "Days")
+fun TabLayout(daysList: MutableState<List<WeatherModel>>, currentDay: MutableState<WeatherModel>) {
+    val tabList = listOf("ПО ЧАСАМ", "ПО ДНЯМ")
     val pagerState = rememberPagerState()
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
@@ -156,15 +164,38 @@ fun TabLayout(daysList: MutableState<List<WeatherModel>>) {
             modifier = Modifier.weight(1.0f)
         ) {
             index ->
-            LazyColumn(modifier = Modifier.fillMaxSize()
-            ){
-                itemsIndexed(
-                    daysList.value
-                ){
-                    _, item ->
-                    ListItem(item)
+            val list = when(index){
+                0 -> getWeatherByHours(currentDay.value.hour)
+                1 -> daysList.value
+                else -> daysList
+
                 }
-            }
+                MainList(list as List<WeatherModel>, currentDay)
         }
     }
 }
+
+private fun getWeatherByHours(hours: String): List<WeatherModel>{
+    if(hours.isEmpty()) return listOf()
+    val hoursArray = JSONArray(hours)
+    val list = ArrayList<WeatherModel>()
+    for(i in 0 until hoursArray.length()){
+        val item = hoursArray[i] as JSONObject
+        list.add(
+            WeatherModel(
+                "",
+                item.getString("time"),
+                item.getString("temp_c").toFloat().toInt().toString() + "°C",
+                item.getJSONObject("condition").getString("text"),
+                "",
+                "",
+                item.getJSONObject("condition").getString("icon"),
+                ""
+            )
+        )
+        //попробуй when для изменения картинок(WeatherModel){sunny -> dravable.R.id.твояИконка}
+    }
+    return list
+}
+
+

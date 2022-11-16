@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -33,6 +34,7 @@ const val API_KEY = "c77d8f0d8fc24406a19122925221909"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             WeatherForecastComposeTheme {
                 val daysList = remember{
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
                 )
                 Column {
                     MainCard(currentDay)
-                    TabLayout(daysList)
+                    TabLayout(daysList, currentDay)
                 }
 
             }
@@ -103,7 +105,7 @@ private fun getWeatherByDays(response: String):List<WeatherModel>{
     val city = mainObject.getJSONObject("location").getString("name")
     val days = mainObject.getJSONObject("forecast").getJSONArray("forecastday")
 
-    for(i in 0 until days.length()){
+    for(i in 0 until days.length()){   //Попробуй здесь указать единицу, чтобы отображать список со второго дня
         val item = days[i] as JSONObject
         list.add(
             WeatherModel(
@@ -125,4 +127,8 @@ private fun getWeatherByDays(response: String):List<WeatherModel>{
     )
     return list
 }
+
+
+
+
 

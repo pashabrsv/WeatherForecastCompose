@@ -43,6 +43,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'ru.apps.weatherforecastcompose'
 }
 
 dependencies {
@@ -58,6 +59,7 @@ dependencies {
     implementation"com.google.accompanist:accompanist-pager:0.19.0"
     implementation"com.google.accompanist:accompanist-pager-indicators:0.19.0"
     implementation "com.android.volley:volley:1.2.1"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
