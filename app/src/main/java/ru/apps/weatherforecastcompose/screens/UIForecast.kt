@@ -39,6 +39,7 @@ fun ListItem(item: WeatherModel, currentDay: MutableState<WeatherModel>){
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(3.dp).clickable {
+            if (item.hour.isEmpty()) return@clickable
           currentDay.value = item
         },
         backgroundColor = SeaColor.copy(alpha = 0.4f),
@@ -58,12 +59,12 @@ fun ListItem(item: WeatherModel, currentDay: MutableState<WeatherModel>){
             }
             Text(text = item.currentTemp.ifEmpty { "${item.minTemp}/${item.maxTemp}" },
                 color = Color.White,
-                style = TextStyle(fontSize = 25.sp)
+                style = TextStyle(fontSize = 20.sp)
             )
             AsyncImage(model = "https:${item.icon}",
                 contentDescription = "im6",
                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).
-                size(35.dp))
+                size(40.dp))
         }
     }
 }

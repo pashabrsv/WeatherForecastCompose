@@ -1,6 +1,7 @@
 package ru.apps.weatherforecastcompose.screens
 
 import android.widget.TableLayout
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,7 +35,6 @@ import ru.apps.weatherforecastcompose.R
 import ru.apps.weatherforecastcompose.ui.theme.SeaColor
 
 
-
 @Composable
 fun MainCard(currentDay: MutableState<WeatherModel>) {
     Column(
@@ -58,9 +58,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        modifier = Modifier.padding(top = 8.dp, start = 5.dp),
+                        modifier = Modifier.padding(top = 8.dp, start = 8.dp),
                         text = currentDay.value.time,
-                        style = TextStyle(fontSize = 15.sp),
+                        style = TextStyle(fontSize = 18.sp),
                         color = Color.White
                     )
                     AsyncImage(
@@ -68,26 +68,26 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                         contentDescription = "im2",
                         modifier = Modifier
                             .padding(top = 3.dp, end = 8.dp)
-                            .size(45.dp)
+                            .size(60.dp)
                     )
                 }
                 Text(
                     text = currentDay.value.city,
-                    style = TextStyle(fontSize = 25.sp),
+                    style = TextStyle(fontSize = 20.sp),
                     color = Color.White
                 )
                 Text(
                     text = if (currentDay.value.currentTemp.isNotEmpty())
                         currentDay.value.currentTemp.toFloat().toInt().toString() + "°C"
                     else currentDay.value.minTemp.toFloat().toInt().toString() +
-                            "/ ${currentDay.value.maxTemp.toFloat().toInt()}°C"
+                            "/${currentDay.value.maxTemp.toFloat().toInt()}°C"
                     , //alt+248=== Знак "°"
                     style = TextStyle(fontSize = 65.sp),
                     color = Color.White
                 )
                 Text(
                     text = currentDay.value.condition,
-                    style = TextStyle(fontSize = 17.sp),
+                    style = TextStyle(fontSize = 14.sp),
                     color = Color.White
                 )
                 Row(
@@ -110,15 +110,17 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                         color = Color.White
                     )
                     IconButton(onClick = {
-
                     }
 
-                    ) {
+                    )
+
+                    {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_syncronize ),
                             contentDescription = "im4",
-                            tint = Color.White
+                            tint = Color.White,
                         )
+
                     }
                 }
             }
@@ -196,6 +198,11 @@ private fun getWeatherByHours(hours: String): List<WeatherModel>{
         //попробуй when для изменения картинок(WeatherModel){sunny -> dravable.R.id.твояИконка}
     }
     return list
+}
+
+@Composable
+fun RefreshButton(){
+
 }
 
 

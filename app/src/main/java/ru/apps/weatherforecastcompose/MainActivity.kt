@@ -3,6 +3,7 @@ package ru.apps.weatherforecastcompose
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -21,11 +22,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import ru.apps.weatherforecastcompose.Data.WeatherModel
+import ru.apps.weatherforecastcompose.navigation.SetupNavHost
 import ru.apps.weatherforecastcompose.screens.MainCard
 import ru.apps.weatherforecastcompose.screens.TabLayout
 import ru.apps.weatherforecastcompose.ui.theme.WeatherForecastComposeTheme
@@ -37,6 +40,8 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             WeatherForecastComposeTheme {
+                val navController = rememberNavController()
+                SetupNavHost(navController = navController)
                 val daysList = remember{
                     mutableStateOf(listOf<WeatherModel>())
                 }
@@ -67,11 +72,12 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+
         }
     }
 }
 
-private fun getData(city: String, context: Context,
+private fun getData(city: String, context: Context,  // здесь прописать метод замены города по нажатию на поиск
                     daysList: MutableState<List<WeatherModel>>,
                     currentDay: MutableState<WeatherModel>){
     val url = "https://api.weatherapi.com/v1/forecast.json?key=$API_KEY" +
@@ -127,6 +133,7 @@ private fun getWeatherByDays(response: String):List<WeatherModel>{
     )
     return list
 }
+
 
 
 
