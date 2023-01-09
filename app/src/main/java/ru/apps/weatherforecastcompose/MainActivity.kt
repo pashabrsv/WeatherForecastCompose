@@ -84,15 +84,20 @@ private fun getData(city: String, context: Context,  // здесь пропис�
             "&q=$city" +
             "&days=" +
             "3" +
-            "&aqi=no&alerts=no"
+            "&aqi=no&alerts=no" +
+            "&lang=ru"
 
     val queue = Volley.newRequestQueue(context)
     val sRequest = StringRequest(
         Request.Method.GET,
             url,
         {
+//            В функции getData добавляем в ссылку запроса параметр: &lang=ru,
+//            потом изменяем кодировку переменной response: val resp = String(response.toByteArray(Charsets.ISO_8859_1),
+//            Charsets.UTF_8) и передаем переменную resp в: val list = getWeatherByDay(resp)
             response ->
-            val list = getWeatherByDays(response)
+            val resp = String(response.toByteArray(Charsets.ISO_8859_1), Charsets.UTF_8)
+            val list = getWeatherByDays(resp)
             currentDay.value = list[0]
             daysList.value = list
 
