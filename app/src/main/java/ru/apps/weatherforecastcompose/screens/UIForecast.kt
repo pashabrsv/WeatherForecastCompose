@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,9 +38,10 @@ fun MainList (list: List<WeatherModel>, currentDay: MutableState<WeatherModel>){
 fun ListItem(item: WeatherModel, currentDay: MutableState<WeatherModel>){
     Card(modifier = Modifier
         .fillMaxWidth()
-        .padding(3.dp).clickable {
+        .padding(3.dp)
+        .clickable {
             if (item.hour.isEmpty()) return@clickable
-          currentDay.value = item
+            currentDay.value = item
         },
         backgroundColor = SeaColor.copy(alpha = 0.4f),
         elevation = 0.dp,
@@ -63,8 +64,43 @@ fun ListItem(item: WeatherModel, currentDay: MutableState<WeatherModel>){
             )
             AsyncImage(model = "https:${item.icon}",
                 contentDescription = "im6",
-                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).
-                size(40.dp))
+                modifier = Modifier
+                    .padding(top = 8.dp, bottom = 8.dp)
+                    .size(40.dp))
         }
     }
+}
+
+@Composable
+fun SearchCity(dialogState: MutableState<Boolean>,
+               onSubmit: (String) -> Unit){ // onSubmit функция для передачи города, положим её в текстовую кнопку "Стартуем"
+    val dialogTextSearch = remember {
+        mutableStateOf("")
+    }
+    AlertDialog(onDismissRequest = {      // Прячем диалог по нажатию на свободное поле экрана
+        dialogState.value = false
+    },
+    confirmButton = {
+        TextButton(onClick = {
+            onSubmit(dialogTextSearch.value)
+            dialogState.value = false}) {
+            Text(text = "Страртуем")
+        }
+    },
+    dismissButton = {
+        TextButton(onClick = {dialogState.value = false}) {
+            Text( text = "Отбой")
+
+        }
+    },
+        title = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = "Название города(пока латиницей)")
+                TextField(value = dialogTextSearch.value, onValueChange = {
+                    dialogTextSearch.value = it
+                })
+            }
+
+        }
+        )
 }

@@ -22,6 +22,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -36,7 +38,9 @@ import ru.apps.weatherforecastcompose.ui.theme.SeaColor
 
 
 @Composable
-fun MainCard(currentDay: MutableState<WeatherModel>) {
+fun MainCard(currentDay: MutableState<WeatherModel>,
+             onClickUpdate: () -> Unit,
+             onClickSearchSity:() -> Unit) {
     Column(
         modifier = Modifier
             .padding(5.dp)
@@ -95,7 +99,7 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(onClick = {
-
+                        onClickSearchSity.invoke()
                     }
                     ) {
                         Icon(
@@ -110,6 +114,7 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                         color = Color.White
                     )
                     IconButton(onClick = {
+                        onClickUpdate.invoke()
                     }
 
                     )
@@ -125,6 +130,14 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                 }
             }
         }
+    }
+
+    fun ButtonSearched(text: String,
+                       onTextChange: (String) -> Unit,
+                       onCloseClicked: () -> Unit,
+                       onSearchClicked: () -> Unit
+    ){
+
     }
 }
 

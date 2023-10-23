@@ -30,6 +30,7 @@ import org.json.JSONObject
 import ru.apps.weatherforecastcompose.Data.WeatherModel
 import ru.apps.weatherforecastcompose.navigation.SetupNavHost
 import ru.apps.weatherforecastcompose.screens.MainCard
+import ru.apps.weatherforecastcompose.screens.SearchCity
 import ru.apps.weatherforecastcompose.screens.TabLayout
 import ru.apps.weatherforecastcompose.ui.theme.WeatherForecastComposeTheme
 
@@ -45,6 +46,10 @@ class MainActivity : ComponentActivity() {
                 val daysList = remember{
                     mutableStateOf(listOf<WeatherModel>())
                 }
+                val dialogState = remember{
+                    mutableStateOf(false)
+                }
+
                  val currentDay = remember{
                      mutableStateOf(WeatherModel(
                          "",
@@ -57,6 +62,11 @@ class MainActivity : ComponentActivity() {
                          ""
                      ))
                  }
+                if (dialogState.value){
+                    SearchCity(dialogState, onSubmit = {
+                        getData(it, this, daysList, currentDay)
+                    })
+                }
                 getData("Krasnodar", this, daysList, currentDay)
                 Image(
                     painter = painterResource(id = R.drawable.sky),
@@ -67,7 +77,12 @@ class MainActivity : ComponentActivity() {
                     contentScale = ContentScale.Crop
                 )
                 Column {
-                    MainCard(currentDay)
+                    MainCard(currentDay, onClickUpdate = {
+                        getData("Krasnodar", this@MainActivity, daysList, currentDay)
+                    },
+                    onClickSearchSity = {
+                        dialogState.value = true
+                    })
                     TabLayout(daysList, currentDay)
                 }
 
